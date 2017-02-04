@@ -13,9 +13,11 @@ if(empty($_POST["width"]) || empty($_POST["height"]))
 }
 else
 {
-	$msg = validUploadFile($_FILES["file"]);
-	if( $msg == "valid")
+	$isValidFile = validUploadFile($_FILES["file"]);
+	if( $isValidFile )
 	{
+		$imagetype = $_FILES["file"]["type"];	// To use the appropriate function
+		
 		//move_uploaded_file($_FILES["file"]["tmp_name"], $_FILES["file"]["name"]);
 		$frameWidth = $_POST["width"];
 		$frameHeight = $_POST["height"];
@@ -24,7 +26,7 @@ else
 		$startY = 0;
 		
 		list($width, $height) = getimagesize($_FILES["file"]["tmp_name"]);
-		$srcimage = imagecreatefrompng($_FILES["file"]["tmp_name"]);
+		$srcimage = ($imagetype == "image/png") ? imagecreatefrompng($_FILES["file"]["tmp_name"]) : imagecreatefromjpeg($_FILES["file"]["tmp_name"];
 		
 		$usedColor = getColorCollection($srcimage, $width, $height);
 		$colorInt = findNotUsedColor($usedColor);
@@ -44,10 +46,10 @@ else
 				
 				imagecopy($desimage, $srcimage, 0, 0, $col * $frameWidth, $row * $frameHeight, $frameWidth, $frameHeight);
 				
-				$file = "./result/".$frameNumber.".png";
+				$file = ($imagetype == "image/png") ? "./result/".$frameNumber.".png" : "./result/".$frameNumber.".jpeg";
 				imagepng($desimage, $file);
 				imagedestroy($desimage);
-				echo "<img src=\"".$file."\"/>";
+				echo "<img src=\"".$file."\" alt=\"".$_FILES['file']['tmp_name']."\"/>";
 				
 				$frameNumber++;
 			}
@@ -100,10 +102,7 @@ function validUploadFile($file)
 	{
 		return "Unknown File Type!";
 	}
-	else if ($file["type"] != "image/jpeg"
-	&& $file["type"] != "image/jpg"
-	&& $file["type"] != "image/png"
-	&& $file["type"] != "image/x-png")
+	else if ($file["type"] != "image/png" && $file["type"] != "image/jpeg")	// Only working types for now
 	{
 		return "File type ".$file["type"]." is invalid!";
 	}
@@ -113,7 +112,7 @@ function validUploadFile($file)
 		return "File is too big!";
 	}
 	
-	return "valid";
+	return True;
 }
 
 function validImages()
@@ -123,14 +122,14 @@ function validImages()
 		extension=php_mbstring.dll
 		extension=php_exif.dll
 	*/
-	$ext = exif_imagetype( $_FILES['file']['tmp_name']);
-	if($ext === false)
+	$ext = exif_imagetype( $_FILES['file']['tmp_name'] );
+	if !($ext)
 	{
-		return false;
+		return False;
 	}
 	else
 	{
-		return true;
+		return True;
 	}
 }
 ?>
