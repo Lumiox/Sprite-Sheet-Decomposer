@@ -26,7 +26,7 @@ else
 		$startY = 0;
 		
 		list($width, $height) = getimagesize($_FILES["file"]["tmp_name"]);
-		$srcimage = ($imagetype == "image/png") ? imagecreatefrompng($_FILES["file"]["tmp_name"]) : imagecreatefromjpeg($_FILES["file"]["tmp_name"];
+		$srcimage = ($imagetype == "image/png") ? imagecreatefrompng($_FILES["file"]["tmp_name"]) : imagecreatefromjpeg($_FILES["file"]["tmp_name"]);
 		
 		$usedColor = getColorCollection($srcimage, $width, $height);
 		$colorInt = findNotUsedColor($usedColor);
@@ -117,13 +117,13 @@ function validUploadFile($file)
 
 function validImages()
 {
-	/**
+	/*
 		Enable the following extensions
 		extension=php_mbstring.dll
 		extension=php_exif.dll
 	*/
 	$ext = exif_imagetype( $_FILES['file']['tmp_name'] );
-	if !($ext)
+	if (!$ext)
 	{
 		return False;
 	}
